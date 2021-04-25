@@ -1,8 +1,8 @@
-import 'package:flutter_dev_quiz/challenge/widgets/answer/answer_widget.dart';
+import 'package:flutter_dev_quiz/shared/models/answer.model.dart';
 
 class QuestionModel {
   final String title;
-  final List<AnsqwerQuestionWidget> answers;
+  final List<AnswerModel> answers;
 
   QuestionModel({required this.title, required this.answers})
       : assert(
