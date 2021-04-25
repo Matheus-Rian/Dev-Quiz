@@ -1,18 +1,30 @@
+import 'package:flutter/foundation.dart';
+import 'package:flutter_dev_quiz/core/app_images.dart';
+import 'package:flutter_dev_quiz/home/home_repository.dart';
 import 'package:flutter_dev_quiz/home/home_state.dart';
+import 'package:flutter_dev_quiz/shared/models/answer.model.dart';
+import 'package:flutter_dev_quiz/shared/models/question_model.dart';
 import 'package:flutter_dev_quiz/shared/models/quiz_model.dart';
 import 'package:flutter_dev_quiz/shared/models/user_model.dart';
 
 class HomeController {
-  HomeState state = HomeState.empty;
+  final stateNotifier = ValueNotifier<HomeState>(HomeState.empty);
+  set state(HomeState state) => stateNotifier.value = state;
+  HomeState get state => stateNotifier.value;
 
   UserModel? user;
   List<QuizModel>? quizzes;
 
-  void getUser() {
-    user = UserModel(
-        name: "Matheus Rian",
-        photoUrl: "https://avatars.githubusercontent.com/u/53922139?v=4");
+  final repository = HomeRepository();
+  void getUser() async {
+    state = HomeState.loading;
+    user = await repository.getUser();
+    state = HomeState.sucess;
   }
 
-  void getQuizzes() {}
+  void getQuizzes() async {
+    state = HomeState.loading;
+    quizzes = await repository.getQuizzes();
+    state = HomeState.sucess;
+  }
 }
