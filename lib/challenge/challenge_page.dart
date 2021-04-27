@@ -3,11 +3,14 @@ import 'package:flutter_dev_quiz/challenge/challenge_controller.dart';
 import 'package:flutter_dev_quiz/challenge/widgets/next_button/next_button_widget.dart';
 import 'package:flutter_dev_quiz/challenge/widgets/question_indicator/question_indicator_widget.dart';
 import 'package:flutter_dev_quiz/challenge/widgets/quiz/quiz_widget.dart';
+import 'package:flutter_dev_quiz/result/result_page.dart';
 import 'package:flutter_dev_quiz/shared/models/question_model.dart';
 
 class ChallengePage extends StatefulWidget {
   final List<QuestionModel> questions;
-  ChallengePage({Key? key, required this.questions}) : super(key: key);
+  final String title;
+  ChallengePage({Key? key, required this.questions, required this.title})
+      : super(key: key);
 
   @override
   _ChallengePageState createState() => _ChallengePageState();
@@ -27,7 +30,12 @@ class _ChallengePageState extends State<ChallengePage> {
   void nextPage() {
     if (controller.currentPage < widget.questions.length)
       pageController.nextPage(
-          duration: Duration(seconds: 1), curve: Curves.linear);
+          duration: Duration(milliseconds: 500), curve: Curves.linear);
+  }
+
+  void onSelected(bool value) {
+    if (value) controller.qtdAnswerRight++;
+    nextPage();
   }
 
   @override
@@ -61,7 +69,7 @@ class _ChallengePageState extends State<ChallengePage> {
         children: widget.questions
             .map((e) => QuizWidget(
                   question: e,
-                  onChange: nextPage,
+                  onSelected: onSelected,
                 ))
             .toList(),
       ),
@@ -83,7 +91,17 @@ class _ChallengePageState extends State<ChallengePage> {
                       if (value == widget.questions.length)
                         Expanded(
                           child: NextButtonWidget.green(
-                              label: "Finaliar", onTap: () {}),
+                              label: "Finaliar",
+                              onTap: () {
+                                Navigator.pushReplacement(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => ResultPage(
+                                              result: controller.qtdAnswerRight,
+                                              title: widget.title,
+                                              length: widget.questions.length,
+                                            )));
+                              }),
                         )
                     ],
                   )),
